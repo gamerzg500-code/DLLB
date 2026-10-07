@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deep Learning Lab Portal — 10 Comprehensive Experiments</title>
+  <meta name="description" content="Interactive laboratory portal separating and indexing 10 core Deep Learning experiments with full source code, architecture visualizations, expected outputs, and theory.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Header / Navigation Bar -->
+  <header class="app-header" id="appHeader">
+    <div class="header-left">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">DeepLab<span class="accent-dot">.</span>io</span>
+          <span class="brand-subtitle">Neural Experiment Suite</span>
+        </div>
+      </div>
+      <div class="exp-count-pill" id="expCountBadge">10 Experiments Ready</div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="searchInput" placeholder="Search experiments, architectures, layers, datasets..." autocomplete="off">
+      <kbd class="shortcut-key" title="Press / to search">/</kbd>
+      <button class="search-clear-btn" id="searchClearBtn" title="Clear search" aria-label="Clear search">&times;</button>
+    </div>
+
+    <div class="header-actions">
+      <!-- Progress Indicator -->
+      <div class="progress-pill" id="progressPill" title="Lab Progress Tracker">
+        <span class="progress-label">Progress:</span>
+        <span class="progress-fraction" id="progressFraction">0/10</span>
+        <div class="progress-bar-mini">
+          <div class="progress-fill-mini" id="progressFillMini" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <button class="btn btn-secondary btn-icon-only" id="themeToggleBtn" title="Toggle Light/Dark Theme" aria-label="Toggle Theme">
+        <span class="theme-icon-dark">🌙</span>
+        <span class="theme-icon-light">☀️</span>
+      </button>
+
+      <button class="btn btn-primary" id="downloadAllBtn" title="Download Complete Laboratory Notebook">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+        <span>Export All</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Category Filter Bar -->
+  <nav class="category-nav" id="categoryNav" aria-label="Experiment Categories">
+    <div class="category-scroll-container">
+      <button class="cat-pill active" data-category="all">
+        <span class="cat-pill-icon">⚡</span> All Experiments <span class="cat-badge" id="badgeAll">10</span>
+      </button>
+      <button class="cat-pill" data-category="foundational">
+        <span class="cat-pill-icon">🧠</span> Foundational & MLP <span class="cat-badge">2</span>
+      </button>
+      <button class="cat-pill" data-category="vision">
+        <span class="cat-pill-icon">👁️</span> Regularization & Vision <span class="cat-badge">2</span>
+      </button>
+      <button class="cat-pill" data-category="sequential">
+        <span class="cat-pill-icon">🔄</span> Sequential & NLP <span class="cat-badge">3</span>
+      </button>
+      <button class="cat-pill" data-category="generative">
+        <span class="cat-pill-icon">✨</span> Unsupervised & Generative <span class="cat-badge">3</span>
+      </button>
+    </div>
+    <div class="view-mode-toggle" id="viewModeToggle">
+      <button class="mode-btn active" id="splitViewBtn" title="Master-Detail View">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="18" rx="1"></rect><rect x="14" y="3" width="7" height="18" rx="1"></rect></svg>
+      </button>
+      <button class="mode-btn" id="fullViewBtn" title="Full Grid Overview">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Main Portal Layout -->
+  <main class="app-layout" id="appLayout">
+    <!-- Left Sidebar: Experiment Navigator -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2 class="sidebar-title">Experiments Index</h2>
+        <span class="sidebar-count" id="visibleExpCount">Showing 10</span>
+      </div>
+
+      <div class="experiment-list" id="experimentList" role="tablist">
+        <!-- Injected via JavaScript dynamically -->
+      </div>
+    </aside>
+
+    <!-- Right Workspace: Experiment Detail View -->
+    <section class="experiment-workspace" id="experimentWorkspace">
+      <!-- Empty/Loading State fallback -->
+      <div class="loading-state" id="loadingState" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading experiment details...</p>
+      </div>
+
+      <!-- Active Experiment Content Container -->
+      <div class="workspace-inner" id="workspaceInner">
+        <!-- Header Banner for the active experiment -->
+        <div class="exp-hero-card" id="expHeroCard">
+          <div class="hero-top-row">
+            <div class="hero-badge-group">
+              <span class="exp-number-pill" id="heroExpNumber">EXP 01</span>
+              <span class="exp-category-pill" id="heroExpCategory">Foundational</span>
+              <span class="exp-complexity-pill" id="heroExpComplexity">Beginner</span>
+            </div>
+            <div class="hero-actions">
+              <button class="btn btn-sm btn-ghost" id="markReviewedBtn" title="Toggle reviewed status">
+                <span class="status-icon" id="heroReviewedIcon">⚪</span>
+                <span id="heroReviewedText">Mark Reviewed</span>
+              </button>
+              <button class="btn btn-sm btn-secondary" id="heroColabBtn" title="Open in Google Colab">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M16.944 11h4.021a6.002 6.002 0 0 0-11.905-1.042A6 6 0 0 0 2.056 13h4.021a2 2 0 0 1 3.868-.52 2 2 0 0 1 3.055 0 2 2 0 0 1 3.944-.48z"/></svg>
+                <span>Colab</span>
+              </button>
+              <button class="btn btn-sm btn-secondary" id="heroDownloadPyBtn" title="Download Python script">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <span>Download .py</span>
+              </button>
+              <button class="btn btn-sm btn-primary" id="heroCopyCodeBtn" title="Copy experiment code">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                <span id="heroCopyText">Copy Code</span>
+              </button>
+            </div>
+          </div>
+
+          <h1 class="hero-title" id="heroTitle">Experiment Title Goes Here</h1>
+          <p class="hero-aim" id="heroAim">Objective and aim description</p>
+
+          <div class="hero-meta-row">
+            <div class="meta-item">
+              <span class="meta-label">Dataset</span>
+              <span class="meta-val" id="heroDataset">XOR Truth Table</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Architecture</span>
+              <span class="meta-val" id="heroArchitecture">Sequential MLP</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Loss Function</span>
+              <span class="meta-val" id="heroLoss">Binary Crossentropy</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Optimizer</span>
+              <span class="meta-val" id="heroOptimizer">Adam (lr=0.001)</span>
+            </div>
+            <div class="meta-item">
+              <span class="meta-label">Epochs</span>
+              <span class="meta-val" id="heroEpochs">1000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs for Current Experiment -->
+        <div class="workspace-tabs" id="workspaceTabs" role="tablist">
+          <button class="tab-btn active" data-tab="code" role="tab" id="tabCodeBtn">
+            <span class="tab-icon">💻</span> Source Code
+          </button>
+          <button class="tab-btn" data-tab="architecture" role="tab" id="tabArchBtn">
+            <span class="tab-icon">📐</span> Architecture & Graph
+          </button>
+          <button class="tab-btn" data-tab="results" role="tab" id="tabResultsBtn">
+            <span class="tab-icon">📊</span> Expected Output & Plots
+          </button>
+          <button class="tab-btn" data-tab="theory" role="tab" id="tabTheoryBtn">
+            <span class="tab-icon">📚</span> Theory & Viva Voce
+          </button>
+        </div>
+
+        <!-- Tab 1: Source Code Panel -->
+        <div class="tab-pane active" id="paneCode" role="tabpanel">
+          <div class="code-panel-header">
+            <div class="code-file-badge">
+              <span class="file-icon">🐍</span>
+              <span id="codeFileName">exp01_xor_mlp.py</span>
+              <span class="code-line-counter" id="codeLineCount">26 lines</span>
+            </div>
+            <div class="code-toolbar">
+              <button class="btn btn-xs btn-ghost" id="wrapCodeBtn" title="Toggle Line Wrap">
+                <span>Wrap</span>
+              </button>
+              <button class="btn btn-xs btn-ghost" id="selectAllBtn" title="Select All Code">
+                <span>Select All</span>
+              </button>
+              <button class="btn btn-xs btn-primary" id="copyPanelCodeBtn" title="Copy Source Code">
+                <span>Copy</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="code-wrapper">
+            <pre class="code-editor" id="codeEditor"><code class="language-python" id="codeBlock"></code></pre>
+          </div>
+
+          <!-- Code API Callout Chips -->
+          <div class="api-chips-container" id="apiChipsContainer">
+            <span class="chips-title">Key Keras & TensorFlow APIs Used:</span>
+            <div class="chips-list" id="chipsList"></div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Architecture & Graph Panel -->
+        <div class="tab-pane" id="paneArchitecture" role="tabpanel">
+          <div class="arch-container">
+            <div class="arch-card">
+              <h3 class="arch-card-title">Network Pipeline & Tensor Flow</h3>
+              <div class="diagram-canvas" id="diagramCanvas">
+                <!-- Injected layer cards -->
+              </div>
+            </div>
+
+            <div class="math-specs-grid">
+              <div class="spec-card">
+                <h4 class="spec-title">Mathematical Objective</h4>
+                <div class="math-formula-box" id="mathFormulaBox">
+                  <!-- Injected formula description -->
+                </div>
+              </div>
+              <div class="spec-card">
+                <h4 class="spec-title">Layer Configurations</h4>
+                <div class="layer-table-wrapper" id="layerTableWrapper">
+                  <!-- Injected layer table -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Expected Output & Visual Results Panel -->
+        <div class="tab-pane" id="paneResults" role="tabpanel">
+          <div class="results-grid">
+            <!-- Simulated Terminal Console Output -->
+            <div class="console-card">
+              <div class="console-header">
+                <div class="console-dots">
+                  <span class="dot red"></span>
+                  <span class="dot yellow"></span>
+                  <span class="dot green"></span>
+                </div>
+                <span class="console-title">Execution Terminal Output</span>
+                <button class="btn btn-xs btn-ghost console-copy-btn" id="copyConsoleBtn" title="Copy console logs">Copy Logs</button>
+              </div>
+              <div class="console-body" id="consoleBody">
+                <!-- Injected simulated console lines -->
+              </div>
+            </div>
+
+            <!-- Visualization / Plot simulation -->
+            <div class="plot-card">
+              <div class="plot-header">
+                <h3 class="plot-title" id="plotCardTitle">Simulated Evaluation Plot</h3>
+                <span class="plot-badge" id="plotBadge">Matplotlib Output</span>
+              </div>
+              <div class="plot-container" id="plotContainer">
+                <!-- Injected SVG / Canvas charts -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 4: Theory & Viva Voce Q&A Panel -->
+        <div class="tab-pane" id="paneTheory" role="tabpanel">
+          <div class="theory-layout">
+            <div class="theory-summary-card" id="theorySummaryCard">
+              <h3 class="theory-heading">Key Theoretical Concepts</h3>
+              <div class="theory-text" id="theoryText">
+                <!-- Injected text -->
+              </div>
+            </div>
+
+            <div class="viva-section">
+              <h3 class="viva-heading">Examination Viva Voce Questions & Answers</h3>
+              <div class="accordion-list" id="vivaList">
+                <!-- Injected accordion items -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Footer (Previous / Next Experiment) -->
+        <div class="exp-navigation-footer">
+          <button class="btn btn-secondary nav-exp-btn" id="prevExpBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            <div class="nav-btn-text">
+              <span class="nav-hint">Previous</span>
+              <span class="nav-target-name" id="prevExpTitle">None</span>
+            </div>
+          </button>
+
+          <div class="exp-pagination-dots" id="paginationDots">
+            <!-- 10 dots injected -->
+          </div>
+
+          <button class="btn btn-secondary nav-exp-btn" id="nextExpBtn">
+            <div class="nav-btn-text text-right">
+              <span class="nav-hint">Next</span>
+              <span class="nav-target-name" id="nextExpTitle">Experiment 2</span>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+  </main>
+
+  <!-- Full Grid Modal View (When Full View is activated) -->
+  <div class="grid-modal" id="gridModal">
+    <div class="grid-modal-content">
+      <div class="grid-modal-header">
+        <h2>All 10 Experiments Overview</h2>
+        <button class="grid-close-btn" id="closeGridBtn">&times;</button>
+      </div>
+      <div class="grid-cards-container" id="gridCardsContainer">
+        <!-- 10 experiment overview cards injected -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast-notification" id="toastNotification">
+    <span class="toast-icon">✓</span>
+    <span class="toast-message" id="toastMessage">Code copied to clipboard</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>
